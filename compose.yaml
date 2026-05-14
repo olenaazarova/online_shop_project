@@ -3,10 +3,21 @@ services:
   payment:
     image: my-payment
     ports:
-      - 8000:8008
+      - 8008:8008
     volumes:
       - ./payment-service:/payment-service
     working_dir: /payment-service
     command: fastapi run ./payment_service.py --port 8008
+    environment:
+      - PYTHONUNBUFFERED=1
+  
+  facade:
+    image: my-payment
+    ports:
+      - 8000:8000
+    volumes:
+      - ./facade-service:/facade-service
+    working_dir: /facade-service
+    command: fastapi run ./facade_service.py --port 8000
     environment:
       - PYTHONUNBUFFERED=1
