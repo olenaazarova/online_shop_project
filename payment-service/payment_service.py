@@ -2,6 +2,12 @@ from fastapi import FastAPI, Request, Form
 from pydantic import BaseModel
 from typing import Annotated
 
+import sys
+sys.path.append('../')
+
+from our_utils.our_utils import register
+register('payment')
+
 app = FastAPI()
 
 class Payment(BaseModel):
