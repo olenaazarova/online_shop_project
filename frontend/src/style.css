@@ -1,0 +1,11 @@
+.flex {
+    display: flex;
+}
+
+.space-btwn {
+    justify-content: space-between;
+}
+
+.space-arnd {
+    justify-content: space-around;
+}
