@@ -1,0 +1,16 @@
+.profile-main {
+    width: 80%;
+    margin: auto;
+}
+
+.buttons {
+    width: 10%;
+    margin: 0 auto;
+    margin-top: 300px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile-btn {
+    height: 50px;
+}

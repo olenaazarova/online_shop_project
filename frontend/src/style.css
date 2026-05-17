@@ -24,3 +24,16 @@
 .typ-button:hover {
     border-radius: 4px;
 }
+
+/* .typ-button-inv {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    transition: 0.2s;
+}
+
+.typ-button-inv:hover {
+    border-radius: 4px;
+} */
+
