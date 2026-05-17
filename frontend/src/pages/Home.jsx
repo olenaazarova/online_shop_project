@@ -28,7 +28,7 @@ function Home() {
         <div className='search-form-div'>
             <form onSubmit={handleSearch} className="search-form flex space-btwn">
                 <input type="text" placeholder="Search for item..." className="search-input" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                <button type="submit" className="search-btn">Search</button>
+                <button type="submit" className="typ-button">Search</button>
             </form>
         </div>
 

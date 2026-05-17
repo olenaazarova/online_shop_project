@@ -1,3 +1,7 @@
+/* #root {
+    height: 100vh;
+} */
+
 .flex {
     display: flex;
 }
@@ -8,4 +12,15 @@
 
 .space-arnd {
     justify-content: space-around;
+}
+
+.typ-button {
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid black;
+    transition: 0.2s;
+}
+
+.typ-button:hover {
+    border-radius: 4px;
 }

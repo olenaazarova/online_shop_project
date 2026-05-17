@@ -17,7 +17,7 @@ function ItemCard({item}) {
                 <p>{item.price}</p>
             </div>
             <div className="item-to-buy">
-                <button className="to-buy-btn" onClick={onBuy}>
+                <button className="typ-button" onClick={onBuy}>
                     buy
                 </button>
             </div>

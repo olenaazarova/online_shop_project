@@ -11,6 +11,7 @@ function NavBar() {
             <div className="navbar-links flex space-btwn">
                 <Link to="/" className="nav-link">Home</Link>
                 <Link to="/cart" className="nav-link">Cart</Link>
+                <Link to="/profile" className="nav-link">Profile</Link>
             </div>
         </div>
     </nav>
