@@ -1,11 +1,19 @@
 import './Home.css'
 import '../style.css'
 import ItemCard from "../components/ItemCard"
-import { useState } from "react";
+// import { getItems } from '../services/api';
+import { useState, useEffect } from "react";
 
 function Home() {
 
     const [searchQuery, setSearchQuery] = useState("")
+
+    // const [items, setItems] = useState([]);
+    // useEffect(() => {
+    //     const new_items = getItems();
+    //     console.log(new_items);
+    //     setItems(new_items);
+    // }, [])
 
     const items = [
         { id: 1, name: "laptop", price: 50, url: "https://techterms.com/img/xl/laptop_586.png" },

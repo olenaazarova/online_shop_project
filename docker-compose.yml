@@ -269,6 +269,11 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  frontend:
+    image: my-frontend
+    ports:
+      - 5173:5173
+
 volumes:
   auth-db-primary-data:
   user-db-primary-data:
