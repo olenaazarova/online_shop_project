@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pymongo
+motor
+pika==1.3.2
+python-dotenv

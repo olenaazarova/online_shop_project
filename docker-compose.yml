@@ -1,0 +1,275 @@
+services:
+  api-gateway:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth-service-1
+      - auth-service-2
+      - auth-service-3
+      - user-service-1
+      - user-service-2
+      - user-service-3
+      - payment-service-1
+      - payment-service-2
+      - payment-service-3
+      - items-service-1
+      - items-service-2
+      - items-service-3
+
+  auth-service-1: &auth-service
+    build: ./authentication-service
+    environment:
+      DATABASE_URL: postgres://auth_user:auth_password@auth-db-primary:5432/auth_db
+      REDIS_SENTINELS: redis-sentinel-1:26379,redis-sentinel-2:26379,redis-sentinel-3:26379
+      REDIS_MASTER_NAME: auth-redis
+      JWT_SECRET: local-development-secret
+      JWT_TTL_SECONDS: 7200
+      USER_SERVICE_URL: http://user-service-1:8000
+      INTERNAL_API_KEY: local-internal-key
+    depends_on:
+      - auth-db-primary
+      - redis-sentinel-1
+      - user-service-1
+
+  auth-service-2:
+    <<: *auth-service
+
+  auth-service-3:
+    <<: *auth-service
+
+  user-service-1: &user-service
+    build: ./user-service
+    environment:
+      DATABASE_URL: postgres://profile_user:profile_password@user-db-primary:5432/user_db
+      AUTH_SERVICE_URL: http://api-gateway
+      INTERNAL_API_KEY: local-internal-key
+    depends_on:
+      - user-db-primary
+
+  user-service-2:
+    <<: *user-service
+
+  user-service-3:
+    <<: *user-service
+
+  payment-service-1: &payment-service
+    build: ./payment-service
+    volumes:
+      - ./:/var/data
+    working_dir: /var/data/payment-service
+    command: fastapi run ./payment_service.py --port 8008
+    environment:
+      PYTHONUNBUFFERED: 1
+      DATABASE_URL: postgres://payment_user:payment_password@payment-db-primary:5432/payment_db
+    depends_on:
+      - payment-db-primary
+
+  payment-service-2:
+    <<: *payment-service
+
+  payment-service-3:
+    <<: *payment-service
+
+  items-service-1: &items-service
+    build: ./items-service
+    environment:
+      MONGO_URL: mongodb://items-mongo-1:27017,items-mongo-2:27017,items-mongo-3:27017/items_db?replicaSet=items-rs
+      MONGO_DB: items_db
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - items-mongo-init
+      - rabbitmq
+
+  items-service-2:
+    <<: *items-service
+
+  items-service-3:
+    <<: *items-service
+
+  search-service:
+    build: ./search-service
+    environment:
+      MONGO_URL: mongodb://items-mongo-1:27017,items-mongo-2:27017,items-mongo-3:27017/items_db?replicaSet=items-rs
+      MONGO_DB: items_db
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - items-mongo-init
+      - rabbitmq
+
+  auth-db-primary:
+    image: bitnami/postgresql:16
+    environment:
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+      POSTGRESQL_USERNAME: auth_user
+      POSTGRESQL_PASSWORD: auth_password
+      POSTGRESQL_DATABASE: auth_db
+    volumes:
+      - auth-db-primary-data:/bitnami/postgresql
+
+  auth-db-replica-1: &auth-db-replica
+    image: bitnami/postgresql:16
+    environment:
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_MASTER_HOST: auth-db-primary
+      POSTGRESQL_MASTER_PORT_NUMBER: 5432
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+      POSTGRESQL_PASSWORD: auth_password
+    depends_on:
+      - auth-db-primary
+
+  auth-db-replica-2:
+    <<: *auth-db-replica
+
+  user-db-primary:
+    image: bitnami/postgresql:16
+    environment:
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+      POSTGRESQL_USERNAME: profile_user
+      POSTGRESQL_PASSWORD: profile_password
+      POSTGRESQL_DATABASE: user_db
+    volumes:
+      - user-db-primary-data:/bitnami/postgresql
+
+  user-db-replica-1: &user-db-replica
+    image: bitnami/postgresql:16
+    environment:
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_MASTER_HOST: user-db-primary
+      POSTGRESQL_MASTER_PORT_NUMBER: 5432
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+      POSTGRESQL_PASSWORD: profile_password
+    depends_on:
+      - user-db-primary
+
+  user-db-replica-2:
+    <<: *user-db-replica
+
+  payment-db-primary:
+    image: bitnami/postgresql:16
+    environment:
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+      POSTGRESQL_USERNAME: payment_user
+      POSTGRESQL_PASSWORD: payment_password
+      POSTGRESQL_DATABASE: payment_db
+    volumes:
+      - payment-db-primary-data:/bitnami/postgresql
+
+  payment-db-replica-1: &payment-db-replica
+    image: bitnami/postgresql:16
+    environment:
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_MASTER_HOST: payment-db-primary
+      POSTGRESQL_MASTER_PORT_NUMBER: 5432
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+      POSTGRESQL_PASSWORD: payment_password
+    depends_on:
+      - payment-db-primary
+
+  payment-db-replica-2:
+    <<: *payment-db-replica
+
+  items-mongo-1:
+    image: mongo:7
+    command: ["mongod", "--replSet", "items-rs", "--bind_ip_all"]
+    volumes:
+      - items-mongo-1-data:/data/db
+
+  items-mongo-2:
+    image: mongo:7
+    command: ["mongod", "--replSet", "items-rs", "--bind_ip_all"]
+    volumes:
+      - items-mongo-2-data:/data/db
+
+  items-mongo-3:
+    image: mongo:7
+    command: ["mongod", "--replSet", "items-rs", "--bind_ip_all"]
+    volumes:
+      - items-mongo-3-data:/data/db
+
+  items-mongo-init:
+    image: mongo:7
+    depends_on:
+      - items-mongo-1
+      - items-mongo-2
+      - items-mongo-3
+    restart: "no"
+    command: >
+      bash -c "sleep 6 &&
+      mongosh --host items-mongo-1:27017 --eval '
+      try {
+        rs.initiate({
+          _id: \"items-rs\",
+          members: [
+            { _id: 0, host: \"items-mongo-1:27017\" },
+            { _id: 1, host: \"items-mongo-2:27017\" },
+            { _id: 2, host: \"items-mongo-3:27017\" }
+          ]
+        })
+      } catch (e) { print(e.message) }'"
+
+  redis-master:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-master-data:/data
+
+  redis-replica-1:
+    image: redis:7-alpine
+    command: redis-server --replicaof redis-master 6379 --appendonly yes
+    depends_on:
+      - redis-master
+
+  redis-replica-2:
+    image: redis:7-alpine
+    command: redis-server --replicaof redis-master 6379 --appendonly yes
+    depends_on:
+      - redis-master
+
+  redis-sentinel-1: &redis-sentinel
+    image: redis:7-alpine
+    command: >
+      sh -c "cat > /tmp/sentinel.conf <<EOF
+      port 26379
+      sentinel monitor auth-redis redis-master 6379 2
+      sentinel down-after-milliseconds auth-redis 3000
+      sentinel failover-timeout auth-redis 10000
+      sentinel parallel-syncs auth-redis 1
+      EOF
+      redis-sentinel /tmp/sentinel.conf"
+    depends_on:
+      - redis-master
+      - redis-replica-1
+      - redis-replica-2
+
+  redis-sentinel-2:
+    <<: *redis-sentinel
+
+  redis-sentinel-3:
+    <<: *redis-sentinel
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  auth-db-primary-data:
+  user-db-primary-data:
+  payment-db-primary-data:
+  items-mongo-1-data:
+  items-mongo-2-data:
+  items-mongo-3-data:
+  redis-master-data:

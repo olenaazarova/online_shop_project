@@ -3,10 +3,24 @@ from uuid import uuid4
 
 import jwt
 import redis
+from redis.sentinel import Sentinel
 
 from app.settings import settings
 
-client = redis.from_url(settings.redis_url, decode_responses=True)
+
+def redis_client():
+    if settings.redis_sentinels:
+        sentinels = [
+            (host.strip(), int(port))
+            for host, port in (node.split(":") for node in settings.redis_sentinels.split(","))
+        ]
+        sentinel = Sentinel(sentinels, socket_timeout=1, decode_responses=True)
+        return sentinel.master_for(settings.redis_master_name, socket_timeout=1)
+
+    return redis.from_url(settings.redis_url, decode_responses=True)
+
+
+client = redis_client()
 
 
 def wait_for_redis() -> None:
