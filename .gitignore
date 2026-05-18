@@ -1,1 +1,79 @@
-__pycache__
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Docker
+*.pid
+
+# MongoDB
+data/db/
+
+# Build
+dist/
+build/
+
+# FastAPI
+*.sqlite3
+
+# Mac
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Docker override
+docker-compose.override.yml
+
+# Temporary files
+tmp/
+temp/
+
+# Mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Bytecode
+*.class
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node (if frontend added later)
+node_modules/
+
+# RabbitMQ data
+rabbitmq_data/
+
+# Test outputs
+reports/

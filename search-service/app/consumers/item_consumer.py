@@ -6,8 +6,17 @@ import time
 from dotenv import load_dotenv
 
 from app.db.database import search_collection
+from app.cache.redis_client import redis_client
 
 load_dotenv()
+
+
+def invalidate_search_cache():
+
+    for key in redis_client.keys("search:*"):
+        redis_client.delete(key)
+
+    print("Search cache invalidated")
 
 
 def process_message(message):
@@ -18,6 +27,8 @@ def process_message(message):
     if event == "ITEM_CREATED":
 
         search_collection.insert_one(data)
+
+        invalidate_search_cache()
 
     elif event == "ITEM_UPDATED":
 
@@ -30,6 +41,8 @@ def process_message(message):
             }
         )
 
+        invalidate_search_cache()
+
     elif event == "ITEM_DELETED":
 
         search_collection.delete_one(
@@ -37,6 +50,8 @@ def process_message(message):
                 "id": data["id"]
             }
         )
+
+        invalidate_search_cache()
 
 
 def callback(ch, method, properties, body):
