@@ -1,0 +1,36 @@
+services:
+
+  payment:
+    image: my-payment
+    ports:
+      - 8008:8008
+    volumes:
+      - ./:/var/data/
+    working_dir: /var/data/payment-service
+    command: fastapi run ./payment_service.py --port 8008
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - config
+  
+  facade:
+    image: my-payment
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/var/data
+    working_dir: /var/data/facade-service
+    command: fastapi run ./facade_service.py --port 8000
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - config
+  
+  config:
+    image: my-payment
+    ports:
+      - 7999:7999
+    volumes:
+      - ./:/var/data/
+    working_dir: /var/data/config-server
+    command: fastapi run ./config_server.py --port 7999

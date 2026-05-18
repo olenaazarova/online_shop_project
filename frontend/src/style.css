@@ -1,0 +1,39 @@
+/* #root {
+    height: 100vh;
+} */
+
+.flex {
+    display: flex;
+}
+
+.space-btwn {
+    justify-content: space-between;
+}
+
+.space-arnd {
+    justify-content: space-around;
+}
+
+.typ-button {
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid black;
+    transition: 0.2s;
+}
+
+.typ-button:hover {
+    border-radius: 4px;
+}
+
+/* .typ-button-inv {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    transition: 0.2s;
+}
+
+.typ-button-inv:hover {
+    border-radius: 4px;
+} */
+

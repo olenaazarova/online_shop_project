@@ -1,0 +1,22 @@
+.home {
+    width: 80%;
+    margin: auto;
+}
+
+.search-form-div {
+    width: 50%;
+    margin: auto;
+    height: 80px;
+
+    display: flex;
+    align-items: center;
+}
+
+.search-form {
+    margin: auto;
+    width: 40%;
+}
+
+/* .items-grid {
+    d
+} */
