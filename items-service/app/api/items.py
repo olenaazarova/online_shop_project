@@ -3,7 +3,7 @@ from app.auth_client import validate_token
 from app.schemas.item_schema import ItemCreate, ItemResponse
 from app.services.item_service import ItemService
 
-router = APIRouter(prefix="/items", tags=["Items"])
+router = APIRouter(tags=["Items"])
 
 
 def current_user(authorization: str | None = Header(default=None)) -> dict:
