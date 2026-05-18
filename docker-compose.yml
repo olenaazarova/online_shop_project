@@ -79,6 +79,7 @@ services:
       MONGO_URL: mongodb://items-mongo-1:27017,items-mongo-2:27017,items-mongo-3:27017/items_db?replicaSet=items-rs
       MONGO_DB: items_db
       RABBITMQ_HOST: rabbitmq
+      AUTH_SERVICE_URL: http://auth-service-1:8000
     depends_on:
       - items-mongo-init
       - rabbitmq
