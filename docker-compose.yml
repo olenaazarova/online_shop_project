@@ -95,12 +95,15 @@ services:
       MONGO_URL: mongodb://items-mongo-1:27017,items-mongo-2:27017,items-mongo-3:27017/items_db?replicaSet=items-rs
       MONGO_DB: items_db
       RABBITMQ_HOST: rabbitmq
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
     depends_on:
       - items-mongo-init
       - rabbitmq
+      - redis-master
 
   auth-db-primary:
-    image: bitnami/postgresql:16
+    image: bitnamilegacy/postgresql:16
     environment:
       POSTGRESQL_REPLICATION_MODE: master
       POSTGRESQL_REPLICATION_USER: repl_user
@@ -112,7 +115,7 @@ services:
       - auth-db-primary-data:/bitnami/postgresql
 
   auth-db-replica-1: &auth-db-replica
-    image: bitnami/postgresql:16
+    image: bitnamilegacy/postgresql:16
     environment:
       POSTGRESQL_REPLICATION_MODE: slave
       POSTGRESQL_MASTER_HOST: auth-db-primary
@@ -127,7 +130,7 @@ services:
     <<: *auth-db-replica
 
   user-db-primary:
-    image: bitnami/postgresql:16
+    image: bitnamilegacy/postgresql:16
     environment:
       POSTGRESQL_REPLICATION_MODE: master
       POSTGRESQL_REPLICATION_USER: repl_user
@@ -139,7 +142,7 @@ services:
       - user-db-primary-data:/bitnami/postgresql
 
   user-db-replica-1: &user-db-replica
-    image: bitnami/postgresql:16
+    image: bitnamilegacy/postgresql:16
     environment:
       POSTGRESQL_REPLICATION_MODE: slave
       POSTGRESQL_MASTER_HOST: user-db-primary
@@ -154,7 +157,7 @@ services:
     <<: *user-db-replica
 
   payment-db-primary:
-    image: bitnami/postgresql:16
+    image: bitnamilegacy/postgresql:16
     environment:
       POSTGRESQL_REPLICATION_MODE: master
       POSTGRESQL_REPLICATION_USER: repl_user
@@ -166,7 +169,7 @@ services:
       - payment-db-primary-data:/bitnami/postgresql
 
   payment-db-replica-1: &payment-db-replica
-    image: bitnami/postgresql:16
+    image: bitnamilegacy/postgresql:16
     environment:
       POSTGRESQL_REPLICATION_MODE: slave
       POSTGRESQL_MASTER_HOST: payment-db-primary
@@ -239,9 +242,10 @@ services:
 
   redis-sentinel-1: &redis-sentinel
     image: redis:7-alpine
-    command: >
-      sh -c "cat > /tmp/sentinel.conf <<EOF
+    command: |
+      sh -c "cat > /tmp/sentinel.conf <<'EOF'
       port 26379
+      sentinel resolve-hostnames yes
       sentinel monitor auth-redis redis-master 6379 2
       sentinel down-after-milliseconds auth-redis 3000
       sentinel failover-timeout auth-redis 10000
