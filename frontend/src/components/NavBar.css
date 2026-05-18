@@ -1,0 +1,21 @@
+.navbar {
+    height: 80px;
+    width: 100%;
+    background-color: black;
+    color: white;
+    justify-content: center;
+}
+
+.navbar-inner {
+    width: 80%;
+    margin: auto;
+    color: white;
+}
+
+.navbar-inner a {
+    color: white;
+}
+
+.navbar-links {
+    width: 140px;
+}
