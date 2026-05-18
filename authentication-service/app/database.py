@@ -10,7 +10,10 @@ def initialize_database() -> None:
     for attempt in range(1, 21):
         try:
             with connection() as conn:
-                conn.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto")
+                try:
+                    conn.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto")
+                except psycopg.errors.UniqueViolation:
+                    pass
                 conn.execute(
                     """
                     CREATE TABLE IF NOT EXISTS auth_users (

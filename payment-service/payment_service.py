@@ -5,9 +5,7 @@ from typing import Annotated
 import sys
 sys.path.append('../')
 
-from our_utils.our_utils import register
 from payment_repository import initialize_database, save_payment
-register('payment')
 
 app = FastAPI()
 
