@@ -1,17 +1,31 @@
 import "./Register.css"
 import "../style.css"
+import registerUser from "../services/api";
 
 function Register() {
+
+    const handleForm = (event) => {
+        event.preventDefault();
+        let form = event.target;
+        let formData = new FormData(form);
+        // console.log(formData);
+        let formDataObj = Object.fromEntries(formData.entries());
+        console.log(formDataObj)    
+        // let formJson = JSON.stringify(formDataObj);
+        // console.log(formJson);
+        registerUser(formDataObj);
+    }
+
     return <div className="register">
-        <form className="register-form" action="">
+        <form onSubmit={handleForm} className="register-form">
             <div className="register-items">
                 <div className="register-item">
-                    <label htmlFor="name">Name: </label>
-                    <input name="name" type="text" placeholder="..." className="search-input"/>
+                    <label htmlFor="first_name">Name: </label>
+                    <input name="first_name" type="text" placeholder="..." className="search-input"/>
                 </div>
                 <div className="register-item">
-                    <label htmlFor="surname">Surname: </label>
-                    <input name="surname" type="text" placeholder="..." className="search-input"/>
+                    <label htmlFor="last_name">Surname: </label>
+                    <input name="last_name" type="text" placeholder="..." className="search-input"/>
                 </div>
                 <div className="register-item">
                     <label htmlFor="email">Email: </label>

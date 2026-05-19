@@ -115,6 +115,8 @@ services:
       POSTGRESQL_DATABASE: auth_db
     volumes:
       - auth-db-primary-data:/bitnami/postgresql
+    ports:
+      - 5432:5432
 
   auth-db-replica-1: &auth-db-replica
     image: bitnamilegacy/postgresql:16
@@ -142,6 +144,8 @@ services:
       POSTGRESQL_DATABASE: user_db
     volumes:
       - user-db-primary-data:/bitnami/postgresql
+    ports:
+      - 5433:5432
 
   user-db-replica-1: &user-db-replica
     image: bitnamilegacy/postgresql:16
@@ -169,6 +173,8 @@ services:
       POSTGRESQL_DATABASE: payment_db
     volumes:
       - payment-db-primary-data:/bitnami/postgresql
+    ports:
+      - 5434:5432
 
   payment-db-replica-1: &payment-db-replica
     image: bitnamilegacy/postgresql:16
@@ -275,6 +281,10 @@ services:
     image: my-frontend
     ports:
       - 5173:5173
+    # volumes:
+    #   - ./frontend:/app
+    # working_dir: /app
+    # command: npm run dev
 
 volumes:
   auth-db-primary-data:

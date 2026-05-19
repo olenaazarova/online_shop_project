@@ -46,7 +46,7 @@ def default_get(user: dict = Depends(current_user)):
     print('get')
     return {"status": "ok", "service": "payment-service"}
 
-@app.post('/json/')
+@app.post('/json')
 def default_post(payment: Payment, user: dict = Depends(current_user)):
     save_payment(payment)
     return {"status": "accepted", "payment": payment}

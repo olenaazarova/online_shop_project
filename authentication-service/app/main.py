@@ -1,12 +1,22 @@
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 
 from app.database import initialize_database
 from app.schemas import LoginRequest, RegisterRequest
 from app.service import login, logout, register, validate_token
 from app.sessions import wait_for_redis
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="Authentication Service")
 
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = origins,
+    allow_credentials = True,
+    allow_methods = ["*"],
+    allow_headers = ["*"]
+)
 
 def bearer_token(authorization: str | None = Header(default=None)) -> str:
     if not authorization:
