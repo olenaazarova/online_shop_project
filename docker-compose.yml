@@ -64,6 +64,7 @@ services:
     environment:
       PYTHONUNBUFFERED: 1
       DATABASE_URL: postgres://payment_user:payment_password@payment-db-primary:5432/payment_db
+      AUTH_SERVICE_URL: http://api-gateway
     depends_on:
       - payment-db-primary
 

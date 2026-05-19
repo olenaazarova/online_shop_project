@@ -1,13 +1,10 @@
 from fastapi import FastAPI, Request, Form, Depends, Header, HTTPException
 from pydantic import BaseModel
 from typing import Annotated
-import json, urllib.request, os, sys
+import json, urllib.request, os
 
-sys.path.append('../')
-from our_utils.our_utils import register
 from payment_repository import initialize_database, save_payment
 
-register('payment')
 app = FastAPI()
 
 AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://auth-service-1:8000")
@@ -45,7 +42,7 @@ def startup():
     initialize_database()
 
 @app.get('/')
-def default_get():
+def default_get(user: dict = Depends(current_user)):
     print('get')
     return {"status": "ok", "service": "payment-service"}
 
