@@ -30,6 +30,11 @@ def health() -> dict:
     return {"status": "ok", "service": "auth-service"}
 
 
+@app.get("/api/auth/health")
+def auth_health() -> dict:
+    return health()
+
+
 @app.post("/api/auth/register", status_code=201)
 def register_user(payload: RegisterRequest) -> dict:
     return register(payload)
