@@ -14,9 +14,37 @@ const getItems = () => {
     api.get('/api/items');
 }
 
-const registerUser = async (user) => {
-    let res = await api.post("/api/auth/register", user);
-    console.log(res);
+export const registerUser = async (user) => {
+    let res = null;
+    try{
+        res = await api.post("/api/auth/register", user);
+        console.log("api", res);
+    } catch (error) {
+        console.log(error);
+    }
+    return res;
 }
 
-export default registerUser;
+export const loginUser = async (user) => {
+    let res = null;
+    try {
+        res = await api.post("/api/auth/login", user);
+        console.log("log api", res);
+    } catch (error) {
+        console.log(error);
+    }
+    return res
+}
+
+const fetchUser = async (token) => {
+    let res = null; 
+    try {
+        res = await api.get("/api/auth/me", {headers: {"Authorization": `Bearer ${token}`}});
+        console.log("log api", res);
+    } catch (error) {
+        console.log(error);
+    }
+    return res
+}
+
+// export default {registerUser, loginUser};
